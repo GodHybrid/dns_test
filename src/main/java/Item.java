@@ -3,8 +3,8 @@ public class Item
     public String name;
     public String price;
     public Integer priceInt;
-    public String priceWithWarranty;
-    public Integer priceWithWarrantyInt;
+    public String priceOfWarranty = "0";
+    public Integer priceOfWarrantyInt = 0;
     public String details;
     public Boolean stockPresent;
     public Boolean hasWarranty = false;
@@ -25,13 +25,13 @@ public class Item
         this.details = details.toLowerCase();
         this.stockPresent = stockPresent;
         this.hasWarranty = hasWarranty;
-        this.priceWithWarranty = priceWithWarranty;
+        this.priceOfWarranty = priceWithWarranty;
         parsePrice();
     }
 
     private void parsePrice()
     {
         priceInt = Integer.parseInt(price.replace(" ",""));
-        priceWithWarrantyInt = Integer.parseInt(price.replace(" ",""));
+        priceOfWarrantyInt = Integer.parseInt(priceOfWarranty.replace(" ",""));
     }
 }

@@ -57,7 +57,7 @@ public class DNSMainTest
         items.buy();
         items.search("Detroit");
 
-        ItemPage marcusBoi = new ItemPage();
+        ItemPage marcusBoi = new ItemPage(true);
         marcusBoi.savePrice();
         marcusBoi.buy();
         Assert.assertEquals(items.priceWithWarranty + marcusBoi.price, (int) marcusBoi.getBasketPriceCurrent(marcusBoi.basketPrice));

@@ -3,6 +3,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,8 @@ public class BasketPage extends BasePageObj
 
     private void completeListOfItems()
     {
-        for(int i = 0; i < driver.findElements(By.xpath(baseXPath)).size(); i++)
+        waitForLoadElement(driver.findElement(By.xpath(baseXPath + "/div")));
+        for(int i = 0; i < driver.findElements(By.xpath(baseXPath + "/div")).size(); i++)
         {
             elements.add(baseXPath + "/div[" + (i + 1) + "]");
         }
@@ -47,15 +49,18 @@ public class BasketPage extends BasePageObj
         {
             String name = waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'name')]/a"))).getText();
             String price = waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'price')]/div[@class='price']/div/span"))).getText();
-            Boolean hasWarranty =
-                    (waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]")))
-                            .isDisplayed()
-                            &&
-                            waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]")))
-                            .getText().contains("24"));
-            String priceWithWarranty = waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]/span")))
-                    .getText().replace("(+", "");
-            Item tmp = new Item(name, price, "Empty", true, hasWarranty, priceWithWarranty);
+            Boolean hasWarranty =  !driver.findElements(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]")).isEmpty()
+                    ? driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]"))
+                            .getText().contains("24")
+                    : false;
+            String priceOfWarranty;
+            if(hasWarranty)
+            {
+                priceOfWarranty = waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]/span")))
+                        .getText().replace("(+", "").replace(")", "");
+            }
+            else priceOfWarranty = "0";
+            Item tmp = new Item(name, price, "Empty", true, hasWarranty, priceOfWarranty);
             itemOptions.add(tmp);
         }
     }
@@ -111,7 +116,8 @@ public class BasketPage extends BasePageObj
         {
             if(i.hasWarranty)
             {
-                totalSum += i.priceWithWarrantyInt;
+                totalSum += i.priceInt;
+                totalSum += i.priceOfWarrantyInt;
             }
             else totalSum += i.priceInt;
         }
@@ -132,7 +138,11 @@ public class BasketPage extends BasePageObj
         }
         WebElement tmpPlus = waitForLoadElement(driver.findElement(By.xpath(elements.get(index) + "/div/div[contains(@class,'product')]/div[contains(@class,'count')]/div/button[contains(@class,'plus')]")));
         waitForLoadElement(tmpPlus);
-        for(;i>0;i--)tmpPlus.click();
+        for( /* */ ; i > 0; i--)
+        {
+            waitForLoad.until(ExpectedConditions.elementToBeClickable(tmpPlus));
+            waitForLoadElement(tmpPlus).click();
+        }
         renew();
     }
 
