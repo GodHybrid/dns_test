@@ -1,22 +1,23 @@
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 
 public class fieldChanged implements ExpectedCondition<Boolean>
 {
-    String text;
     String xPath;
+    Integer prevNum;
 
-    public fieldChanged(String xPath, String prevText)
+    public fieldChanged(String xPath, Integer prevNum)
     {
         this.xPath = xPath;
-        text = prevText;
+        this.prevNum = prevNum;
     }
 
     @Override
     public Boolean apply(WebDriver driver)
     {
-        Boolean didPercentChange = driver.findElement(By.xpath(xPath)).getText().equals(text);
-        return !didPercentChange;
+        Boolean didFieldChange = driver.findElement(By.xpath(xPath)).getText().replace(" ", "").equals(prevNum);
+        return !didFieldChange;
     }
 }

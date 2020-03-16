@@ -1,4 +1,5 @@
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -12,6 +13,9 @@ import java.util.List;
 public class SearchPage extends BasePageObj
 {
     String baseXPath ="//div[@class='products-list__content']/div[1]/div[@class='catalog-items-list view-simple']";
+
+    @FindBy(xpath="//*/span[@class='cart-link__lbl']/span")
+    WebElement basketPrice;
 
     String searchItem;
     List<String> elements;
@@ -31,6 +35,8 @@ public class SearchPage extends BasePageObj
         int chosenOption = shuffleThrough(searchItem);
         if(chosenOption >= 0)
         {
+            JavascriptExecutor je = (JavascriptExecutor) driver;
+            je.executeScript("arguments[0].scrollIntoView(false);", driver.findElement(By.xpath(baseXPath + "/div[" + (chosenOption + 1) + "]/div/div[contains(@class, 'main')]/div[contains(@class, 'info')]/div/div[contains(@class,'title')]/div[contains(@class,'title')]")));
             String xPath = baseXPath + "/div[" + (chosenOption + 1) + "]/div/div[contains(@class, 'main')]/div[contains(@class, 'info')]/div/div[contains(@class,'title')]/div[contains(@class,'title')]/a";
             waitForLoadElement(driver.findElement(By.xpath(xPath))).click();
         }
@@ -38,19 +44,23 @@ public class SearchPage extends BasePageObj
 
     private void completeListOfItems()
     {
-        waitForLoadElement(driver.findElement(By.xpath(baseXPath)));
-        for(int i = 0; i < driver.findElements(By.xpath(baseXPath)).size(); i++)
+        waitForLoadElement(driver.findElement(By.xpath(baseXPath + "/div")));
+        for(int i = 0; i < driver.findElements(By.xpath(baseXPath + "/div")).size(); i++)
         {
             elements.add(baseXPath + "/div[" + (i + 1) + "]");
         }
+        JavascriptExecutor je = (JavascriptExecutor) driver;
         for(String s : elements)
         {
+            WebElement tmp = waitForLoadElement(driver.findElement(By.xpath(s)));
+            je.executeScript("arguments[0].scrollIntoView(false);", tmp);
+            waitForLoad.until(ExpectedConditions.visibilityOf(tmp));
             String name = waitForLoadElement(driver.findElement(By.xpath(s + "/div/div[contains(@class, 'main')]/div[contains(@class, 'info')]/div/div[contains(@class,'title')]/div[contains(@class,'title')]/a"))).getText();
             String details = waitForLoadElement(driver.findElement(By.xpath(s + "/div/div[contains(@class, 'main')]/div[contains(@class, 'info')]/div/div[contains(@class,'title')]/span"))).getText();
             String price = waitForLoadElement(driver.findElement(By.xpath(s + "/div/div[contains(@class, 'main')]/div[contains(@class, 'price')]/div/div[@class='product-price__current']"))).getText();
             Boolean stockPresent = waitForLoadElement(driver.findElement(By.xpath(s + "/div/div[contains(@class, 'footer')]/div/div[contains(@class,'order')]/span"))).getAttribute("class").contains("no");
-            Item tmp = new Item(name, price, details, stockPresent);
-            itemOptions.add(tmp);
+            Item newItem = new Item(name, price, details, stockPresent);
+            itemOptions.add(newItem);
         }
     }
 

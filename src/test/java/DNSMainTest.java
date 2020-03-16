@@ -60,21 +60,21 @@ public class DNSMainTest
         ItemPage marcusBoi = new ItemPage();
         marcusBoi.savePrice();
         marcusBoi.buy();
-//        Assert.assertTrue(items.priceWithWarranty + marcusBoi.price == marcusBoi.getBasketPriceCurrent());
+        Assert.assertEquals(items.priceWithWarranty + marcusBoi.price, (int) marcusBoi.getBasketPriceCurrent(marcusBoi.basketPrice));
         marcusBoi.goToBasket();
 
         BasketPage checkIn = new BasketPage();
-//        Assert.assertTrue(checkIn.checkWarranty("PlayStation"));
-//        Assert.assertEquals("25999", checkIn.priceItemCorrect("PlayStation").toString());
-//        Assert.assertEquals("2599", checkIn.priceItemCorrect("Detroit").toString());
-//        Assert.assertEquals("33278", checkIn.getTotalSum().toString());
+        Assert.assertTrue(checkIn.checkWarranty("PlayStation"));
+        Assert.assertEquals("25999", checkIn.priceItemCorrect("PlayStation").toString());
+        Assert.assertEquals("2599", checkIn.priceItemCorrect("Detroit").toString());
+        Assert.assertEquals("33278", checkIn.getTotalSum().toString());
         checkIn.deleteItem("Detroit");
-//        Assert.assertEquals("-1", checkIn.priceItemCorrect("Detroit").toString());
+        Assert.assertEquals("-1", checkIn.priceItemCorrect("Detroit").toString());
         checkIn.addItem("PlayStation", 2);
-//        Assert.assertEquals("77997", checkIn.priceItemCorrect("PlayStation").toString());
+        Assert.assertEquals("77997", checkIn.priceItemCorrect("PlayStation").toString());
         int tmp = checkIn.getTotalSum();
         checkIn.returnItems();
-//        Assert.assertTrue(tmp - 77997 == 2599);
+        Assert.assertTrue(tmp - 77997 == 2599);
     }
 
     @After

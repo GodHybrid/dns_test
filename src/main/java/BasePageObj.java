@@ -17,9 +17,6 @@ public class BasePageObj
     @FindBy(xpath="//*[@class='ui-link cart-link']")
     WebElement basketButton;
 
-    @FindBy(xpath="//*/span[@class='cart-link__lbl']/span")
-    WebElement basketPrice;
-
     @FindBy(xpath="//*[@type='search' and contains(@placeholder, '100')]")
     WebElement searchLine;
 
@@ -30,7 +27,7 @@ public class BasePageObj
         PageFactory.initElements(driver, this);
     }
 
-    public Integer getBasketPriceCurrent()
+    public Integer getBasketPriceCurrent(WebElement basketPrice)
     {
         waitForLoad.pollingEvery(Duration.ofMillis(200)).until(ExpectedConditions.visibilityOf(basketPrice));
         return Integer.parseInt(basketPrice.getText().replace(" ",""));

@@ -14,6 +14,9 @@ public class BasketPage extends BasePageObj
     @FindBy(xpath="//span[@class='restore-last-removed']")
     WebElement returnLastItem;
 
+    @FindBy(xpath="//*/span[@class='cart-link__lbl']/span")
+    WebElement basketPrice;
+
     Item lastDeleted;
     List<String> elements;
     ArrayList<Item> itemOptions;
