@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DNSMainTest
 {
-    Integer price1, price2;
+    //Integer price1, price2;
 
     @Before
     public void preparation()
@@ -61,14 +61,8 @@ public class DNSMainTest
         marcusBoi.savePrice();
         marcusBoi.buy();
         Assert.assertEquals(items.priceWithWarranty + marcusBoi.price, (int) marcusBoi.getBasketPriceCurrent(marcusBoi.basketPrice));
-        try {
-            Thread.sleep(400);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        marcusBoi.goToBasket();
 
-        BasketPage checkIn = new BasketPage();
+        BasketPage checkIn = marcusBoi.goToBasket();
         Assert.assertTrue(checkIn.checkWarranty("PlayStation"));
         Assert.assertEquals("25999", checkIn.priceItemCorrect("PlayStation").toString());
         Assert.assertEquals("2599", checkIn.priceItemCorrect("Detroit").toString());
@@ -80,11 +74,5 @@ public class DNSMainTest
         int tmp = checkIn.getTotalSum();
         checkIn.returnItems();
         //Assert.assertTrue(tmp - 77997 == 2599);
-    }
-
-    @After
-    public void finisher()
-    {
-        //selectorDriver.quit();
     }
 }

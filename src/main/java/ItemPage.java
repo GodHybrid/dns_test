@@ -47,6 +47,7 @@ public class ItemPage extends BasePageObj
         }
         else
         {
+            waitForLoadElement(priceChanged);
             priceWithWarranty = Integer.parseInt(waitForLoadElement(priceFull).getText().replace(" ",""));
             return priceWithWarranty;
         }

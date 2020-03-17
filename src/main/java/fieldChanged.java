@@ -17,7 +17,7 @@ public class fieldChanged implements ExpectedCondition<Boolean>
     @Override
     public Boolean apply(WebDriver driver)
     {
-        Boolean didFieldChange = driver.findElement(By.xpath(xPath)).getText().replace(" ", "").equals(prevNum);
-        return !didFieldChange;
+        Boolean didFieldChange = !(Integer.parseInt(driver.findElement(By.xpath(xPath)).getText().replace(" ", "")) == prevNum);
+        return didFieldChange;
     }
 }

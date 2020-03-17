@@ -52,9 +52,9 @@ public class BasePageObj
         searchLine.sendKeys(Keys.ENTER);
     }
 
-    public void goToBasket()
+    public BasketPage goToBasket()
     {
-        WebElement basketButtonNew = driver.findElement(By.xpath("//*[@class='ui-link cart-link']"));
-        waitForLoadElement(basketButtonNew).click();
+        waitForLoadElement(basketButton).click();
+        return new BasketPage();
     }
 }
