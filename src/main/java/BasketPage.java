@@ -47,6 +47,7 @@ public class BasketPage extends BasePageObj
         String xxPath = "/div/div[contains(@class,'product')]";
         for(String s : elements)
         {
+            Integer count = Integer.parseInt(waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'count')]/div/input"))).getAttribute("value"));
             String name = waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'name')]/a"))).getText();
             String price = waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'price')]/div[@class='price']/div/span"))).getText();
             Boolean hasWarranty =  !driver.findElements(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]")).isEmpty()
@@ -54,6 +55,7 @@ public class BasketPage extends BasePageObj
                             .getText().contains("24")
                     : false;
             String priceOfWarranty;
+            System.out.println(count);
             if(hasWarranty)
             {
                 priceOfWarranty = waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]/span")))
@@ -132,17 +134,30 @@ public class BasketPage extends BasePageObj
             if(ii.name.contains(item.toLowerCase()))
             {
                 index = itemOptions.indexOf(ii);
-                lastDeleted = ii;
                 break;
             }
         }
+        String xPath = "//*/div[@class='cart-items__products']/div[" + (index + 1) + "]/div/div[contains(@class,'product')]/div[contains(@class,'count')]/div/input";
+        WebElement counter = driver.findElement(By.xpath(xPath));
+        Integer count = Integer.parseInt(waitForLoadElement(counter).getAttribute("value"));
         WebElement tmpPlus = waitForLoadElement(driver.findElement(By.xpath(elements.get(index) + "/div/div[contains(@class,'product')]/div[contains(@class,'count')]/div/button[contains(@class,'plus')]")));
         waitForLoadElement(tmpPlus);
-        for( /* */ ; i > 0; i--)
+//        for( Integer j = 0 ; j < i; j++)
+//        {
+            //Integer current = Integer.parseInt(waitForLoadElement(counter).getAttribute("value"));
+        while(Integer.parseInt(counter.getAttribute("value")) != count + i)
         {
             waitForLoad.until(ExpectedConditions.elementToBeClickable(tmpPlus));
             waitForLoadElement(tmpPlus).click();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+//            Integer tmp = count + j;
+//            waitForLoad.until(new fieldChanged(xPath, tmp));
+//        }
         renew();
     }
 

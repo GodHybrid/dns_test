@@ -54,6 +54,7 @@ public class BasePageObj
 
     public void goToBasket()
     {
-        waitForLoadElement(basketButton).click();
+        WebElement basketButtonNew = driver.findElement(By.xpath("//*[@class='ui-link cart-link']"));
+        waitForLoadElement(basketButtonNew).click();
     }
 }
