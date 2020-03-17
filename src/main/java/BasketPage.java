@@ -49,7 +49,9 @@ public class BasketPage extends BasePageObj
         {
             Integer count = Integer.parseInt(waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'count')]/div/input"))).getAttribute("value"));
             String name = waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'name')]/a"))).getText();
-            String price = waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'price')]/div[@class='price']/div/span"))).getText();
+            String price1 = waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'price')]/div[@class='price']/div/span"))).getText().replace(" ", "");
+            Integer currPr = Integer.parseInt(price1)/count;
+            String price = currPr.toString();
             Boolean hasWarranty =  !driver.findElements(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]")).isEmpty()
                     ? driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]"))
                             .getText().contains("24")
@@ -62,8 +64,10 @@ public class BasketPage extends BasePageObj
                         .getText().replace("(+", "").replace(")", "");
             }
             else priceOfWarranty = "0";
-            Item tmp = new Item(name, price, "Empty", true, hasWarranty, priceOfWarranty);
-            itemOptions.add(tmp);
+            for(; count > 0; count--) {
+                Item tmp = new Item(name, price, "Empty", true, hasWarranty, priceOfWarranty);
+                itemOptions.add(tmp);
+            }
         }
     }
 
@@ -89,14 +93,15 @@ public class BasketPage extends BasePageObj
     public Integer priceItemCorrect(String item)
     {
         renew();
+        int totalSum = 0;
         for(Item i : itemOptions)
         {
             if(i.name.contains(item.toLowerCase()))
             {
-                return i.priceInt;
+                totalSum += i.priceInt;
             }
         }
-        return -1;
+        return totalSum == 0 ? -1 : totalSum;
     }
 
     public Boolean checkWarranty(String item)

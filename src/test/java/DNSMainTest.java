@@ -70,9 +70,9 @@ public class DNSMainTest
         checkIn.deleteItem("Detroit");
         Assert.assertEquals("-1", checkIn.priceItemCorrect("Detroit").toString());
         checkIn.addItem("PlayStation", 2);
-        //Assert.assertEquals("77997", checkIn.priceItemCorrect("PlayStation").toString());
+        Assert.assertEquals("77997", checkIn.priceItemCorrect("PlayStation").toString());
         int tmp = checkIn.getTotalSum();
         checkIn.returnItems();
-        //Assert.assertTrue(tmp - 77997 == 2599);
+        Assert.assertTrue(tmp - 77997 == 2599);
     }
 }
