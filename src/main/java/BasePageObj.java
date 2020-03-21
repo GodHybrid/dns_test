@@ -11,8 +11,8 @@ import java.time.Duration;
 
 public class BasePageObj
 {
-    WebDriver driver;
-    WebDriverWait waitForLoad;
+    public static WebDriver driver;
+    public static WebDriverWait waitForLoad;
 
     @FindBy(xpath="//*[@class='ui-link cart-link']")
     WebElement basketButton;

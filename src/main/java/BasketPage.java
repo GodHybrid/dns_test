@@ -52,20 +52,24 @@ public class BasketPage extends BasePageObj
             String price1 = waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'price')]/div[@class='price']/div/span"))).getText().replace(" ", "");
             Integer currPr = Integer.parseInt(price1)/count;
             String price = currPr.toString();
-            Boolean hasWarranty =  !driver.findElements(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]")).isEmpty()
-                    ? driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]"))
-                            .getText().contains("24")
-                    : false;
+            Boolean hasWarranty =  !driver.findElements(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]")).isEmpty();
             String priceOfWarranty;
-            System.out.println(count);
+            Integer monthsWarranty;
+            //System.out.println(count);
             if(hasWarranty)
             {
                 priceOfWarranty = waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]/span")))
                         .getText().replace("(+", "").replace(")", "");
+                monthsWarranty = Integer.parseInt(waitForLoadElement(driver.findElement(By.xpath(s + xxPath + "/div[contains(@class,'info')]/div/div[contains(@class,'services')]/div/div/span[not(contains(@class,'list'))]")))
+                        .getText().split("[(]")[0].replaceAll("[^0-9]",""));
             }
-            else priceOfWarranty = "0";
+            else
+            {
+                priceOfWarranty = "0";
+                monthsWarranty = 0;
+            }
             for(; count > 0; count--) {
-                Item tmp = new Item(name, price, "Empty", true, hasWarranty, priceOfWarranty);
+                Item tmp = new Item(name, price, "Empty", true, hasWarranty, priceOfWarranty, monthsWarranty);
                 itemOptions.add(tmp);
             }
         }
@@ -90,7 +94,7 @@ public class BasketPage extends BasePageObj
         renew();
     }
 
-    public Integer priceItemCorrect(String item)
+    public Integer priceItemCorrect(String item, Boolean includeWarranty)
     {
         renew();
         int totalSum = 0;
@@ -99,18 +103,19 @@ public class BasketPage extends BasePageObj
             if(i.name.contains(item.toLowerCase()))
             {
                 totalSum += i.priceInt;
+                if(i.hasWarranty && includeWarranty) totalSum += i.priceOfWarrantyInt;
             }
         }
         return totalSum == 0 ? -1 : totalSum;
     }
 
-    public Boolean checkWarranty(String item)
+    public Boolean checkWarranty(String item, Integer months)
     {
         for(Item i : itemOptions)
         {
             if(i.name.contains(item.toLowerCase()))
             {
-                if(i.hasWarranty) return true;
+                if(i.hasWarranty && i.monthsWarranty == months) return true;
             }
         }
         return false;
@@ -147,9 +152,7 @@ public class BasketPage extends BasePageObj
         Integer count = Integer.parseInt(waitForLoadElement(counter).getAttribute("value"));
         WebElement tmpPlus = waitForLoadElement(driver.findElement(By.xpath(elements.get(index) + "/div/div[contains(@class,'product')]/div[contains(@class,'count')]/div/button[contains(@class,'plus')]")));
         waitForLoadElement(tmpPlus);
-//        for( Integer j = 0 ; j < i; j++)
-//        {
-            //Integer current = Integer.parseInt(waitForLoadElement(counter).getAttribute("value"));
+
         while(Integer.parseInt(counter.getAttribute("value")) != count + i)
         {
             waitForLoad.until(ExpectedConditions.elementToBeClickable(tmpPlus));
@@ -160,9 +163,7 @@ public class BasketPage extends BasePageObj
                 e.printStackTrace();
             }
         }
-//            Integer tmp = count + j;
-//            waitForLoad.until(new fieldChanged(xPath, tmp));
-//        }
+
         renew();
     }
 
@@ -175,6 +176,13 @@ public class BasketPage extends BasePageObj
 
     private Boolean contains(Item lastDeleted)
     {
-        return itemOptions.contains(lastDeleted);
+        for(Item ii : itemOptions)
+        {
+            if(ii.name.contains(lastDeleted.name))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

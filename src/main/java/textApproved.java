@@ -3,7 +3,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 
-public class textApproved implements ExpectedCondition<Boolean>
+    public class textApproved implements ExpectedCondition<Boolean>
 {
     String expectedText;
     WebElement element;

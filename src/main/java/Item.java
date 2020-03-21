@@ -8,6 +8,7 @@ public class Item
     public String details;
     public Boolean stockPresent;
     public Boolean hasWarranty = false;
+    public Integer monthsWarranty = 0;
 
     Item(String name, String price, String details, Boolean stockPresent)
     {
@@ -18,7 +19,7 @@ public class Item
         parsePrice();
     }
 
-    Item(String name, String price, String details, Boolean stockPresent, Boolean hasWarranty, String priceWithWarranty)
+    Item(String name, String price, String details, Boolean stockPresent, Boolean hasWarranty, String priceWithWarranty, Integer monthsWarranty)
     {
         this.name = name.toLowerCase();
         this.price = price;
@@ -26,6 +27,7 @@ public class Item
         this.stockPresent = stockPresent;
         this.hasWarranty = hasWarranty;
         this.priceOfWarranty = priceWithWarranty;
+        this.monthsWarranty = monthsWarranty;
         parsePrice();
     }
 

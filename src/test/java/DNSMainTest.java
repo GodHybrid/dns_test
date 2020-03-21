@@ -2,13 +2,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.util.concurrent.TimeUnit;
 
 /*
 1) открыть dns-shop
@@ -33,8 +26,6 @@ import java.util.concurrent.TimeUnit;
 
 public class DNSMainTest
 {
-    //Integer price1, price2;
-
     @Before
     public void preparation()
     {
@@ -44,35 +35,58 @@ public class DNSMainTest
     @Test
     public void execute()
     {
+        //1
         MainPage main = new MainPage();
+        //2
         main.search("playstation");
 
         SearchPage searchResult = new SearchPage();
+        //3
         searchResult.choose("4 slim black");
 
         ItemPage items = new ItemPage();
+        //4
         items.savePrice();
+        //5
         items.warrantyExpand(2);
+        //6
         items.savePrice();
+        //7
         items.buy();
+        //8
         items.search("Detroit");
 
         ItemPage marcusBoi = new ItemPage(true);
+        //9
         marcusBoi.savePrice();
+        //10
         marcusBoi.buy();
+        //11
         Assert.assertEquals(items.priceWithWarranty + marcusBoi.price, (int) marcusBoi.getBasketPriceCurrent(marcusBoi.basketPrice));
 
+        //12
         BasketPage checkIn = marcusBoi.goToBasket();
-        Assert.assertTrue(checkIn.checkWarranty("PlayStation"));
-        Assert.assertEquals("25999", checkIn.priceItemCorrect("PlayStation").toString());
-        Assert.assertEquals("2599", checkIn.priceItemCorrect("Detroit").toString());
-        Assert.assertEquals("33278", checkIn.getTotalSum().toString());
+        //13
+        Assert.assertTrue(checkIn.checkWarranty("PlayStation", 24));
+        //14
+        Assert.assertEquals(Initialization.settingProperties.getProperty("ps_price"), checkIn.priceItemCorrect("PlayStation", false).toString());
+        Assert.assertEquals(Initialization.settingProperties.getProperty("detroit_price"), checkIn.priceItemCorrect("Detroit", true).toString());
+        Assert.assertEquals(checkIn.getTotalSum().toString(), checkIn.basketPrice.getText().replace(" ", ""));
+        //15
         checkIn.deleteItem("Detroit");
-        Assert.assertEquals("-1", checkIn.priceItemCorrect("Detroit").toString());
+        //16
+        Assert.assertEquals("-1", checkIn.priceItemCorrect("Detroit", false).toString());
+        //17
         checkIn.addItem("PlayStation", 2);
-        Assert.assertEquals("77997", checkIn.priceItemCorrect("PlayStation").toString());
-        int tmp = checkIn.getTotalSum();
+        Assert.assertEquals(Integer.parseInt(Initialization.settingProperties.getProperty("ps_price")) * 3, (long)checkIn.priceItemCorrect("PlayStation", false));
+        //18
         checkIn.returnItems();
-        Assert.assertTrue(tmp - 77997 == 2599);
+        Assert.assertEquals("Something wrong uwu", checkIn.getTotalSum() - checkIn.priceItemCorrect("PlayStation", true), Integer.parseInt(Initialization.settingProperties.getProperty("detroit_price")));
+    }
+
+    @After
+    public void finish()
+    {
+        BasePageObj.driver.quit();
     }
 }
